@@ -1,16 +1,17 @@
 <template>
   <div id="app">
-    <Index></Index>
+<!--    <Index></Index>-->
+    <router-view/>
   </div>
 </template>
 
 <script>
-import Index from './components/Index'
+// import Index from './components/Index'
 
 export default {
   name: 'App',
   components: {
-    Index
+    // Index
   }
 }
 </script>
@@ -24,5 +25,6 @@ export default {
   color: #2c3e50;
   width: 100%;
   height: 100%;
+  box-sizing: border-box;
 }
 </style>
