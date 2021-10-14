@@ -15,12 +15,12 @@
         </el-breadcrumb>
       </el-header>
       <el-main>
-        <el-tabs v-model="editableTabsValue" @tab-click="changeTab" type="border-card" @tab-remove="removeTab">
-          <el-tab-pane label="首页">
-            首页
-          </el-tab-pane>
+        <el-tabs v-model="editableTabsValue"
+                 @tab-click="changeTab"
+                 type="border-card"
+                 @tab-remove="removeTab">
           <el-tab-pane
-              closable
+              :closable="item.name !== '0'"
               v-for="(item) in editableTabs"
               :key="item.name"
               :label="item.title"
@@ -46,7 +46,14 @@ export default {
       asideList: asideList,
       currentAsideList: ['首页'],
       editableTabsValue: '0',
-      editableTabs: [],
+      editableTabs: [
+        {
+          title: "首页",
+          name: "0",
+          menuIndex: "1",
+          content: "首页"
+        }
+      ],
       tabIndex: 0,
       activeMenuIndex: '1',
     }
@@ -71,6 +78,7 @@ export default {
             let nextTab = tabs[index + 1] || tabs[index - 1];
             if (nextTab) {
               activeName = nextTab.name;
+              this.activeMenuIndex = nextTab.menuIndex
             }
           }
         });
