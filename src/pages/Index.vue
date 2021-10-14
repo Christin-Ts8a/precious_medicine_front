@@ -1,6 +1,10 @@
 <template>
   <el-container class="parent_container">
-    <Aside class="left" @clickedIndex="clickedIndex"></Aside>
+    <Aside
+        class="left"
+        :active-menu-index="activeMenuIndex"
+        @clickedIndex="clickedIndex">
+    </Aside>
     <el-container class="right">
       <el-header>
         <el-breadcrumb separator-class="el-icon-arrow-right">
@@ -11,7 +15,7 @@
         </el-breadcrumb>
       </el-header>
       <el-main>
-        <el-tabs v-model="editableTabsValue" type="border-card" @tab-remove="removeTab">
+        <el-tabs v-model="editableTabsValue" @tab-click="changeTab" type="border-card" @tab-remove="removeTab">
           <el-tab-pane label="首页">
             首页
           </el-tab-pane>
@@ -43,15 +47,17 @@ export default {
       currentAsideList: ['首页'],
       editableTabsValue: '0',
       editableTabs: [],
-      tabIndex: 1
+      tabIndex: 0,
+      activeMenuIndex: '1',
     }
   },
   methods: {
-    addTab(targetName) {
+    addTab(targetName, menuIndex) {
       let newTabName = ++this.tabIndex + '';
       this.editableTabs.push({
         title: targetName,
         name: newTabName,
+        menuIndex: menuIndex,
         content: 'New Tab content'
       });
       this.editableTabsValue = newTabName;
@@ -74,22 +80,57 @@ export default {
       this.editableTabs = tabs.filter(tab => tab.name !== targetName);
     },
     clickedIndex(index) {
-      let indexNum = index.split('-')
-      let groupName = this.asideList[indexNum[0] - 1].title
-      let targetName = this.asideList[indexNum[0] - 1].child[indexNum[1] - 1]
-      this.currentAsideList = []
-      this.currentAsideList.push(groupName)
-      this.currentAsideList.push(targetName)
       let flag = true;
+      let targetName = ''
+      if (index.toString().indexOf('-') !== -1) {
+        // 如果点击的是子菜单，则获取子菜单及其父菜单的名称
+        let indexNum = index.toString().split('-')
+        let groupName = this.asideList[indexNum[0] - 1].title
+        targetName = this.asideList[indexNum[0] - 1].child[indexNum[1] - 1]
+        // 修改面包屑
+        this.currentAsideList = []
+        this.currentAsideList.push(groupName)
+        this.currentAsideList.push(targetName)
+      } else if (index === '1') {
+        // 如果点击的是首页菜单，无需添加 tab
+        flag = false
+        // 将首页对应的 tab 选中
+        this.editableTabsValue = '0'
+        // 修改面包屑
+        this.currentAsideList = []
+        this.currentAsideList.push('首页')
+        return
+      }
       for (let i = 0; i < this.editableTabs.length; i++) {
         if (this.editableTabs[i].title === targetName){
+          // 如果已经有对应 tab 页，则将对应 tab 页选中
           flag = false
+          this.editableTabsValue = this.editableTabs[i].name.toString()
           break
         }
       }
       if (flag) {
-        this.addTab(targetName)
+        // 如果没有对应 tab 页，则新建 tab 页
+        this.addTab(targetName, index)
       }
+    },
+    changeTab(tab) {
+      if (tab.index === '0') {
+        this.activeMenuIndex = '1'
+        this.currentAsideList = []
+        this.currentAsideList.push("首页")
+      }
+      this.editableTabs.forEach((tabItem) => {
+        if (tabItem.name === tab.name) {
+          this.activeMenuIndex = tabItem.menuIndex
+          let indexList = tabItem.menuIndex.toString().split('-')
+          let groupName = this.asideList[indexList[0]-1].title
+          let targetName = this.asideList[indexList[0] - 1].child[indexList[1]-1]
+          this.currentAsideList = []
+          this.currentAsideList.push(groupName)
+          this.currentAsideList.push(targetName)
+        }
+      })
     }
   }
 

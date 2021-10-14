@@ -15,8 +15,8 @@
         @select="clickedIndex"
         background-color="#2f4256"
         text-color="#fff"
-        active-text-color="#409eff"
-        unique-opened='true'>
+        :default-active="activeMenuIndex"
+        active-text-color="#409eff">
       <el-menu-item index="1">
         <i class="el-icon-s-home"></i>
         <span slot="title">首页</span>
@@ -41,48 +41,49 @@
           </el-menu-item>
         </el-menu-item-group>
       </el-submenu>
-      <el-submenu index="3" style="align-items: start">
-        <template slot="title">
-          <i class="el-icon-setting"></i>
-          <span>综合管理</span>
-        </template>
-        <el-menu-item-group>
-          <el-menu-item index="3-1">机构管理</el-menu-item>
-          <el-menu-item index="3-2">用户管理</el-menu-item>
-        </el-menu-item-group>
-      </el-submenu>
-      <el-submenu index="4" style="align-items: flex-start">
-        <template slot="title">
-          <i class="el-icon-setting"></i>
-          <span>认证和授权</span>
-        </template>
-        <el-menu-item-group>
-          <el-menu-item index="4-1">用户</el-menu-item>
-          <el-menu-item index="4-2">组</el-menu-item>
-        </el-menu-item-group>
-      </el-submenu>
-      <el-menu-item index="5">
-        <i class="el-icon-index"></i>
-        <span slot="title">Our Team</span>
-      </el-menu-item>
-      <el-submenu index="6" style="align-items: self-start">
-        <template slot="title">
-          <i class="el-icon-setting"></i>
-          <span>相关资源</span>
-        </template>
-        <el-menu-item-group>
-          <el-menu-item index="6-1">Baidu</el-menu-item>
-          <el-menu-item index="6-2">TRANSFAC</el-menu-item>
-          <el-menu-item index="6-2">阿里云基因组学公共数据集</el-menu-item>
-          <el-menu-item index="6-2">GitHub</el-menu-item>
-        </el-menu-item-group>
-      </el-submenu>
+<!--      <el-submenu index="3" style="align-items: start">-->
+<!--        <template slot="title">-->
+<!--          <i class="el-icon-setting"></i>-->
+<!--          <span>综合管理</span>-->
+<!--        </template>-->
+<!--        <el-menu-item-group>-->
+<!--          <el-menu-item index="3-1">机构管理</el-menu-item>-->
+<!--          <el-menu-item index="3-2">用户管理</el-menu-item>-->
+<!--        </el-menu-item-group>-->
+<!--      </el-submenu>-->
+<!--      <el-submenu index="4" style="align-items: flex-start">-->
+<!--        <template slot="title">-->
+<!--          <i class="el-icon-setting"></i>-->
+<!--          <span>认证和授权</span>-->
+<!--        </template>-->
+<!--        <el-menu-item-group>-->
+<!--          <el-menu-item index="4-1">用户</el-menu-item>-->
+<!--          <el-menu-item index="4-2">组</el-menu-item>-->
+<!--        </el-menu-item-group>-->
+<!--      </el-submenu>-->
+<!--      <el-menu-item index="5">-->
+<!--        <i class="el-icon-index"></i>-->
+<!--        <span slot="title">Our Team</span>-->
+<!--      </el-menu-item>-->
+<!--      <el-submenu index="6" style="align-items: self-start">-->
+<!--        <template slot="title">-->
+<!--          <i class="el-icon-setting"></i>-->
+<!--          <span>相关资源</span>-->
+<!--        </template>-->
+<!--        <el-menu-item-group>-->
+<!--          <el-menu-item index="6-1">Baidu</el-menu-item>-->
+<!--          <el-menu-item index="6-2">TRANSFAC</el-menu-item>-->
+<!--          <el-menu-item index="6-2">阿里云基因组学公共数据集</el-menu-item>-->
+<!--          <el-menu-item index="6-2">GitHub</el-menu-item>-->
+<!--        </el-menu-item-group>-->
+<!--      </el-submenu>-->
     </el-menu>
   </el-aside>
 </template>
 
 <script>
 export default {
+  props: ['activeMenuIndex'],
   name: "Aside",
   methods: {
     handleOpen(key, keyPath) {
