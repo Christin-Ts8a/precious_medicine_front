@@ -13,6 +13,20 @@
               v-for="item in currentAsideList">{{ item }}
           </el-breadcrumb-item>
         </el-breadcrumb>
+        <div class="user-status">
+          <i class="el-icon-user-solid" style="margin-right: 5px"></i>
+          <el-dropdown @command="handleCommand">
+            <span class="el-dropdown-link">
+              hansong
+              <i class="el-icon-arrow-down el-icon--right"></i>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="alterPassword">修改密码</el-dropdown-item>
+              <el-dropdown-item command="information">个人信息</el-dropdown-item>
+              <el-dropdown-item command="logout">注销</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </div>
       </el-header>
       <el-main>
         <el-tabs v-model="editableTabsValue"
@@ -26,7 +40,8 @@
               :label="item.title"
               :name="item.name"
           >
-            {{ item.content }}
+            <component :is="item.content"></component>
+<!--            {{ item.content }}-->
           </el-tab-pane>
         </el-tabs>
       </el-main>
@@ -37,6 +52,7 @@
 <script>
 import Aside from "../components/Aside";
 import asideList from "../assets/json/asideList.json"
+import ModelManage from "../components/ModelManage";
 
 export default {
   name: "Index",
@@ -51,7 +67,7 @@ export default {
           title: "首页",
           name: "0",
           menuIndex: "1",
-          content: "首页"
+          content: ''
         }
       ],
       tabIndex: 0,
@@ -61,12 +77,16 @@ export default {
   methods: {
     addTab(targetName, menuIndex) {
       let newTabName = ++this.tabIndex + '';
-      this.editableTabs.push({
-        title: targetName,
-        name: newTabName,
-        menuIndex: menuIndex,
-        content: 'New Tab content'
-      });
+      let controller
+      if (menuIndex !== '1') {
+        controller = {
+          title: targetName,
+          name: newTabName,
+          menuIndex: menuIndex,
+          content: ModelManage
+        }
+      }
+      this.editableTabs.push(controller);
       this.editableTabsValue = newTabName;
     },
     removeTab(targetName) {
@@ -110,7 +130,7 @@ export default {
         return
       }
       for (let i = 0; i < this.editableTabs.length; i++) {
-        if (this.editableTabs[i].title === targetName){
+        if (this.editableTabs[i].title === targetName) {
           // 如果已经有对应 tab 页，则将对应 tab 页选中
           flag = false
           this.editableTabsValue = this.editableTabs[i].name.toString()
@@ -132,14 +152,17 @@ export default {
         if (tabItem.name === tab.name) {
           this.activeMenuIndex = tabItem.menuIndex
           let indexList = tabItem.menuIndex.toString().split('-')
-          let groupName = this.asideList[indexList[0]-1].title
-          let targetName = this.asideList[indexList[0] - 1].child[indexList[1]-1]
+          let groupName = this.asideList[indexList[0] - 1].title
+          let targetName = this.asideList[indexList[0] - 1].child[indexList[1] - 1]
           this.currentAsideList = []
           this.currentAsideList.push(groupName)
           this.currentAsideList.push(targetName)
         }
       })
-    }
+    },
+    handleCommand(command) {
+      console.log(command);
+    },
   }
 
 }
@@ -157,10 +180,24 @@ export default {
 
 .el-header {
   display: flex;
-  /*background-color: #F3F3F4;*/
+  align-items: center;
+  justify-content: space-between;
 }
 
 .el-breadcrumb {
   line-height: 60px;
+}
+
+.user-status {
+  display: flex;
+  align-items: center;
+}
+
+.el-dropdown-link {
+  cursor: pointer;
+}
+
+.el-main {
+  background-color: #F1F1F1;
 }
 </style>
