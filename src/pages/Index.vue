@@ -41,10 +41,10 @@
               :name="item.name"
           >
             <component :is="item.content"></component>
-<!--            {{ item.content }}-->
           </el-tab-pane>
         </el-tabs>
       </el-main>
+      <router-link to="/login">login</router-link>
     </el-container>
   </el-container>
 </template>
@@ -53,6 +53,7 @@
 import Aside from "../components/Aside";
 import asideList from "../assets/json/asideList.json"
 import ModelManage from "../components/ModelManage";
+import predict_data_manage from "../components/predict_data_manage"
 
 export default {
   name: "Index",
@@ -75,15 +76,41 @@ export default {
     }
   },
   methods: {
+    test() {
+      console.log('Router');
+      this.$router.push('/login')
+    },
     addTab(targetName, menuIndex) {
       let newTabName = ++this.tabIndex + '';
       let controller
       if (menuIndex !== '1') {
-        controller = {
-          title: targetName,
-          name: newTabName,
-          menuIndex: menuIndex,
-          content: ModelManage
+        switch(menuIndex) {
+          case '2-1': {
+            controller = {
+              title: targetName,
+              name: newTabName,
+              menuIndex: menuIndex,
+              content: ModelManage
+            }
+            break
+          }
+          case '2-2': {
+            controller = {
+              title: targetName,
+              name: newTabName,
+              menuIndex: menuIndex,
+              content: predict_data_manage
+            }
+            break
+          }
+          default: {
+            controller = {
+              title: targetName,
+              name: newTabName,
+              menuIndex: menuIndex,
+              content: predict_data_manage
+            }
+          }
         }
       }
       this.editableTabs.push(controller);

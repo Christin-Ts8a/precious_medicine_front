@@ -1,10 +1,19 @@
 <template>
   <div class="parent-container">
     <div class="btn-list">
-      <el-button type="primary">
-        <i class="el-icon-plus"></i>
+      <el-button type="primary" @click="centerDialogVisible = true">
         添加
       </el-button>
+      <el-dialog
+          title="上传"
+          :visible.sync="centerDialogVisible"
+          width="30%"
+          center>
+        <upload @uploadFinish="uploadFinish"></upload>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="centerDialogVisible = false">确 定</el-button>
+        </span>
+      </el-dialog>
       <el-button type="danger">
         <i class="el-icon-delete"></i>
         删除
@@ -52,12 +61,20 @@
 </template>
 
 <script>
+import upload from "./upload";
 export default {
   name: "ModelManage",
+  components: {upload},
   props: ['tableData'],
+  methods: {
+    uploadFinish(param) {
+      this.centerDialogVisible = param
+    }
+  },
   data() {
     return {
       selectedNum: 0,
+      centerDialogVisible: false,
     }
   },
 }
@@ -67,11 +84,15 @@ export default {
 .parent-container {
   margin: 10px;
 }
+
 .btn-list {
   display: flex;
   align-items: center;
 }
-.selected-txt {
-  margin-left: 10px;
+
+.el-button {
+  height: 40px;
+  margin-right: 10px;
+  width: 90px;
 }
 </style>
