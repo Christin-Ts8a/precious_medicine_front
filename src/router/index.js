@@ -6,6 +6,7 @@ import Login from "@/pages/Login";
 Vue.use(Router)
 
 export default new Router({
+    base: '/precious/',
     routes: [
         {
             path: '/',

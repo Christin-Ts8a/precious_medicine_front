@@ -1,10 +1,10 @@
 <template>
   <el-container class="parent_container">
-    <Aside
+    <aside_menu
         class="left"
         :active-menu-index="activeMenuIndex"
         @clickedIndex="clickedIndex">
-    </Aside>
+    </aside_menu>
     <el-container class="right">
       <el-header>
         <el-breadcrumb separator-class="el-icon-arrow-right">
@@ -14,18 +14,23 @@
           </el-breadcrumb-item>
         </el-breadcrumb>
         <div class="user-status">
-          <i class="el-icon-user-solid" style="margin-right: 5px"></i>
-          <el-dropdown @command="handleCommand">
+          <div class="have-login" v-if="isLogin">
+            <i class="el-icon-user-solid" style="margin-right: 5px"></i>
+            <el-dropdown @command="handleCommand">
             <span class="el-dropdown-link">
-              hansong
+              {{ username }}
               <i class="el-icon-arrow-down el-icon--right"></i>
             </span>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="alterPassword">修改密码</el-dropdown-item>
-              <el-dropdown-item command="information">个人信息</el-dropdown-item>
-              <el-dropdown-item command="logout">注销</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item command="alterPassword">修改密码</el-dropdown-item>
+                <el-dropdown-item command="information">个人信息</el-dropdown-item>
+                <el-dropdown-item command="signOut">注销</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </div>
+          <div class="have-not-login" v-if="!isLogin" @click="signIn">
+            登录/注册
+          </div>
         </div>
       </el-header>
       <el-main>
@@ -43,21 +48,25 @@
             <component :is="item.content"></component>
           </el-tab-pane>
         </el-tabs>
+        <div class="quick-nav"></div>
       </el-main>
-      <router-link to="/login">login</router-link>
     </el-container>
   </el-container>
 </template>
 
 <script>
-import Aside from "../components/Aside";
+import aside_menu from "../components/aside_menu";
 import asideList from "../assets/json/asideList.json"
-import ModelManage from "../components/ModelManage";
+import model_manage from "../components/model_manage";
 import predict_data_manage from "../components/predict_data_manage"
+import predict_result_manage from "../components/predict_result_manage";
+import model_train from "../components/model_train";
+import train_history from "../components/train_history";
+import * as api from '../api/api'
 
 export default {
   name: "Index",
-  components: {Aside},
+  components: {aside_menu, model_manage, predict_data_manage},
   data() {
     return {
       asideList: asideList,
@@ -73,11 +82,31 @@ export default {
       ],
       tabIndex: 0,
       activeMenuIndex: '1',
+      username: '',
+      isLogin: false,
+    }
+  },
+  created: function () {
+    api.isLogin().then(res => {
+      if (res.status !== 200) {
+        this.username = ''
+        localStorage.clear()
+        this.isLogin = false
+        this.$router.push('/login')
+      }
+    })
+    let nickname = localStorage.getItem("nickname")
+    if (nickname !== undefined && nickname !== '' && nickname !== null) {
+      this.username = nickname
+      this.isLogin = true
+    } else {
+      this.username = ''
+      this.isLogin = false
+      this.$router.push('/login')
     }
   },
   methods: {
-    test() {
-      console.log('Router');
+    signIn() {
       this.$router.push('/login')
     },
     addTab(targetName, menuIndex) {
@@ -90,7 +119,7 @@ export default {
               title: targetName,
               name: newTabName,
               menuIndex: menuIndex,
-              content: ModelManage
+              content: predict_data_manage
             }
             break
           }
@@ -103,12 +132,65 @@ export default {
             }
             break
           }
-          default: {
+          case '2-3': {
             controller = {
               title: targetName,
               name: newTabName,
               menuIndex: menuIndex,
               content: predict_data_manage
+            }
+            break
+          }
+          case '3-1': {
+            controller = {
+              title: targetName,
+              name: newTabName,
+              menuIndex: menuIndex,
+              content: model_manage
+            }
+            break
+          }
+          case '3-2': {
+            controller = {
+              title: targetName,
+              name: newTabName,
+              menuIndex: menuIndex,
+              content: model_train
+            }
+            break
+          }
+          case '3-3': {
+            controller = {
+              title: targetName,
+              name: newTabName,
+              menuIndex: menuIndex,
+              content: train_history
+            }
+            break
+          }
+          case '4-1': {
+            controller = {
+              title: targetName,
+              name: newTabName,
+              menuIndex: menuIndex,
+              content: predict_data_manage
+            }
+            break
+          }
+          case '4-2': {
+            controller = {
+              title: targetName,
+              name: newTabName,
+              menuIndex: menuIndex,
+              content: predict_data_manage
+            }
+            break
+          }
+          default: {
+            controller = {
+              title: targetName,
+              name: newTabName,
+              menuIndex: menuIndex
             }
           }
         }
@@ -135,6 +217,16 @@ export default {
       this.editableTabs = tabs.filter(tab => tab.name !== targetName);
     },
     clickedIndex(index) {
+      let role = localStorage.getItem("role")
+      if (index.indexOf('3-') !== -1 && role > '1') {
+        this.$notify({
+          title: '权限不足',
+          message: '没有权限使用此功能',
+          type: 'error',
+          duration: 1000 * 3
+        });
+        return;
+      }
       let flag = true;
       let targetName = ''
       if (index.toString().indexOf('-') !== -1) {
@@ -188,7 +280,16 @@ export default {
       })
     },
     handleCommand(command) {
-      console.log(command);
+      if (command === 'signOut') {
+        api.logout().then(res => {
+          if (res.status === 200) {
+            localStorage.clear()
+            this.username = ''
+            this.isLogin = false
+            this.$router.push('/login')
+          }
+        })
+      }
     },
   }
 
@@ -226,5 +327,16 @@ export default {
 
 .el-main {
   background-color: #F1F1F1;
+}
+
+.have-not-login:hover {
+  cursor: pointer;
+  color: dodgerblue;
+  text-decoration: underline;
+}
+
+.quick-nav {
+  display: flex;
+  flex-direction: ;
 }
 </style>

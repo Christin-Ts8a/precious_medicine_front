@@ -9,6 +9,8 @@ Vue.config.productionTip = false
 Vue.use(ElementUI);
 Vue.use(VueRouter)
 
+// axios.defaults.withCredentials = true
+
 new Vue({
   router,
   render: h => h(App),
