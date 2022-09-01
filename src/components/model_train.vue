@@ -1,40 +1,34 @@
 <template>
   <div class="parent_container">
-    <el-button type="primary" @click="open">
-      下载
-    </el-button>
-    <el-button type="danger" @click="deleteData">
-      删除
-    </el-button>
-<!--    <div class="btn-list">-->
-<!--      <el-input-->
-<!--          v-model="searchModelName"-->
-<!--          class="search_by_name"-->
-<!--          placeholder="请输入模型名称"-->
-<!--          style="width: 180px"></el-input>-->
-<!--      <el-select-->
-<!--          class="search_by_org"-->
-<!--          v-model="orgSelectedList"-->
-<!--          multiple-->
-<!--          placeholder="请选择机构">-->
-<!--        <el-option-->
-<!--            v-for="item in orgList"-->
-<!--            :key="item.id"-->
-<!--            :label="item.orgName"-->
-<!--            :value="item.id">-->
-<!--        </el-option>-->
-<!--      </el-select>-->
-<!--      <el-button class="search_model" type="primary" @click="searchModel">搜索模型</el-button>-->
-<!--      <el-button class="start_train" type="primary" @click="startTrain">发起训练</el-button>-->
-<!--&lt;!&ndash;      <el-button class="model_upload" type="primary" @click="centerDialogVisible = true">上传模型</el-button>&ndash;&gt;-->
-<!--      <el-dialog-->
-<!--          title="上传"-->
-<!--          :visible.sync="centerDialogVisible"-->
-<!--          width="30%"-->
-<!--          center>-->
-<!--        <upload @uploadFinish="uploadFinish"></upload>-->
-<!--      </el-dialog>-->
-<!--    </div>-->
+    <div class="btn-list">
+      <el-input
+          v-model="searchModelName"
+          class="search_by_name"
+          placeholder="请输入模型名称"
+          style="width: 180px"></el-input>
+      <el-select
+          class="search_by_org"
+          v-model="orgSelectedList"
+          multiple
+          placeholder="请选择机构">
+        <el-option
+            v-for="item in orgList"
+            :key="item.id"
+            :label="item.orgName"
+            :value="item.id">
+        </el-option>
+      </el-select>
+      <el-button class="search_model" type="primary" @click="searchModel">搜索模型</el-button>
+      <el-button class="start_train" type="primary" @click="startTrain">发起训练</el-button>
+<!--      <el-button class="model_upload" type="primary" @click="centerDialogVisible = true">上传模型</el-button>-->
+      <el-dialog
+          title="上传"
+          :visible.sync="centerDialogVisible"
+          width="30%"
+          center>
+        <upload @uploadFinish="uploadFinish"></upload>
+      </el-dialog>
+    </div>
     <el-table
         v-loading="loading"
         :data="tableData"
@@ -45,16 +39,16 @@
           type="selection"
           width="60">
       </el-table-column>
-<!--      <el-table-column-->
-<!--          prop="id"-->
-<!--          label="ID"-->
-<!--          width="60">-->
-<!--      </el-table-column>-->
-<!--      <el-table-column-->
-<!--          prop="orgName"-->
-<!--          label="机构名称"-->
-<!--          width="180">-->
-<!--      </el-table-column>-->
+      <el-table-column
+          prop="id"
+          label="ID"
+          width="60">
+      </el-table-column>
+      <el-table-column
+          prop="orgName"
+          label="机构名称"
+          width="180">
+      </el-table-column>
       <el-table-column
           prop="modelName"
           label="模型名称"

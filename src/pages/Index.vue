@@ -47,8 +47,51 @@
           >
             <component :is="item.content"></component>
           </el-tab-pane>
+<!--          <div class="quick-nav">-->
+<!--            <el-card class="quick-nav-item" :body-style="{ padding: '0px' }">-->
+<!--              <el-image class="quick-nav-img" :src="require('../assets/model_icon.svg')"></el-image>-->
+<!--              <div class="quick-nav-title">-->
+<!--                <span>模型管理</span>-->
+<!--              </div>-->
+<!--            </el-card>-->
+<!--            <el-card class="quick-nav-item" :body-style="{ padding: '0px' }">-->
+<!--              <el-image class="quick-nav-img" :src="require('../assets/model_train_icon.svg')"></el-image>-->
+<!--              <div class="quick-nav-title">-->
+<!--                <span>模型训练</span>-->
+<!--              </div>-->
+<!--            </el-card>-->
+<!--            <el-card class="quick-nav-item" :body-style="{ padding: '0px' }">-->
+<!--              <el-image class="quick-nav-img" :src="require('../assets/train_history.svg')"></el-image>-->
+<!--              <div class="quick-nav-title">-->
+<!--                <span>训练历史</span>-->
+<!--              </div>-->
+<!--            </el-card>-->
+<!--            <el-card class="quick-nav-item" :body-style="{ padding: '0px' }">-->
+<!--              <el-image class="quick-nav-img" :src="require('../assets/predict_data.svg')"></el-image>-->
+<!--              <div class="quick-nav-title">-->
+<!--                <span>预测数据</span>-->
+<!--              </div>-->
+<!--            </el-card>-->
+<!--            <el-card class="quick-nav-item" :body-style="{ padding: '0px' }">-->
+<!--              <el-image class="quick-nav-img" :src="require('../assets/predict_result.svg')"></el-image>-->
+<!--              <div class="quick-nav-title">-->
+<!--                <span>预测结果</span>-->
+<!--              </div>-->
+<!--            </el-card>-->
+<!--            <el-card  class="quick-nav-item" :body-style="{ padding: '0px' }">-->
+<!--              <el-image class="quick-nav-img" :src="require('../assets/user_single.svg')"></el-image>-->
+<!--              <div class="quick-nav-title">-->
+<!--                <span>个人用户</span>-->
+<!--              </div>-->
+<!--            </el-card>-->
+<!--            <el-card class="quick-nav-item" :body-style="{ padding: '0px' }">-->
+<!--              <el-image class="quick-nav-img" :src="require('../assets/user_org.svg')"></el-image>-->
+<!--              <div class="quick-nav-title">-->
+<!--                <span>机构用户</span>-->
+<!--              </div>-->
+<!--            </el-card>-->
+<!--          </div>-->
         </el-tabs>
-        <div class="quick-nav"></div>
       </el-main>
     </el-container>
   </el-container>
@@ -66,7 +109,7 @@ import * as api from '../api/api'
 
 export default {
   name: "Index",
-  components: {aside_menu, model_manage, predict_data_manage},
+  components: {aside_menu, model_manage, predict_data_manage, predict_result_manage},
   data() {
     return {
       asideList: asideList,
@@ -87,14 +130,6 @@ export default {
     }
   },
   created: function () {
-    api.isLogin().then(res => {
-      if (res.status !== 200) {
-        this.username = ''
-        localStorage.clear()
-        this.isLogin = false
-        this.$router.push('/login')
-      }
-    })
     let nickname = localStorage.getItem("nickname")
     if (nickname !== undefined && nickname !== '' && nickname !== null) {
       this.username = nickname
@@ -102,7 +137,14 @@ export default {
     } else {
       this.username = ''
       this.isLogin = false
-      this.$router.push('/login')
+      api.isLogin().then(res => {
+        if (res.status !== 200) {
+          this.username = ''
+          localStorage.clear()
+          this.isLogin = false
+          this.$router.push('/login')
+        }
+      })
     }
   },
   methods: {
@@ -119,7 +161,7 @@ export default {
               title: targetName,
               name: newTabName,
               menuIndex: menuIndex,
-              content: predict_data_manage
+              content: model_manage
             }
             break
           }
@@ -128,7 +170,7 @@ export default {
               title: targetName,
               name: newTabName,
               menuIndex: menuIndex,
-              content: predict_data_manage
+              content: model_train
             }
             break
           }
@@ -137,7 +179,7 @@ export default {
               title: targetName,
               name: newTabName,
               menuIndex: menuIndex,
-              content: predict_data_manage
+              content: train_history
             }
             break
           }
@@ -146,7 +188,7 @@ export default {
               title: targetName,
               name: newTabName,
               menuIndex: menuIndex,
-              content: model_manage
+              content: predict_data_manage
             }
             break
           }
@@ -155,16 +197,7 @@ export default {
               title: targetName,
               name: newTabName,
               menuIndex: menuIndex,
-              content: model_train
-            }
-            break
-          }
-          case '3-3': {
-            controller = {
-              title: targetName,
-              name: newTabName,
-              menuIndex: menuIndex,
-              content: train_history
+              content: predict_result_manage
             }
             break
           }
@@ -193,6 +226,12 @@ export default {
               menuIndex: menuIndex
             }
           }
+        }
+      } else {
+        controller = {
+          title: targetName,
+          name: newTabName,
+          menuIndex: menuIndex
         }
       }
       this.editableTabs.push(controller);
@@ -337,6 +376,32 @@ export default {
 
 .quick-nav {
   display: flex;
-  flex-direction: ;
+  flex-wrap: wrap;
+  justify-content: start;
+}
+
+.quick-nav-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 10rem;
+  width: 10rem;
+  margin: 1rem;
+}
+
+.quick-nav-item:hover {
+  cursor: pointer;
+}
+
+.quick-nav-img {
+  height: 5rem;
+  width: 5rem;
+}
+
+.quick-nav-title {
+  /*padding: 1rem;*/
+  text-align: center;
+  width: 5rem;
 }
 </style>

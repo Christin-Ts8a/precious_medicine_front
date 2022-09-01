@@ -5,7 +5,7 @@
     <el-input v-model="username" placeholder="请输入用户名"></el-input>
     <el-input placeholder="请输入密码" v-model="password" show-password></el-input>
     <span class="tip">{{ errMsg }}</span>
-    <span class="register">注册</span>
+<!--    <span class="register">注册</span>-->
     <el-button type="primary" @click="signIn">登录</el-button>
   </div>
   <div class="login" v-if="!is_login">
@@ -13,7 +13,7 @@
     <el-input v-model="username" placeholder="请输入用户名"></el-input>
     <el-input placeholder="请输入密码" v-model="password" show-password></el-input>
     <el-input placeholder="请再次输入密码" v-model="password_confirm" show-password></el-input>
-    <span class="register">注册</span>
+<!--    <span class="register">注册</span>-->
     <el-button type="primary" @click="signIn">登录</el-button>
   </div>
 </div>
