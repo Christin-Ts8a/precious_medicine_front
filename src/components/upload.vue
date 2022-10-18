@@ -9,13 +9,8 @@
       :limit="10"
       :file-list="fileList"
       :auto-upload="false">
-<!--        <el-button slot="trigger" type="primary">添加数据</el-button>-->
-    <el-button slot="trigger" type="primary">查询陷门</el-button>
+    <el-button slot="trigger" type="primary">选取文件</el-button>
     <el-button style="margin-left: 10px;" type="success" @click="submitUpload">上传到服务器</el-button>
-    <br>
-    <el-checkbox v-model="checked" style="margin-top: 10px">三次多项式近似sigmoid</el-checkbox>
-    <el-checkbox v-model="checked1" style="margin-top: 10px">七次多项式近似sigmoid</el-checkbox>
-    <el-checkbox v-model="checked2" style="margin-top: 10px">逻辑回归</el-checkbox>
   </el-upload>
 </template>
 

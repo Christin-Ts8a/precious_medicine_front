@@ -1,9 +1,9 @@
 import axios from 'axios'
 
 // 服务器地址
-let base = 'http://localhost:8088'
+let base = 'http://127.0.0.1:8088'
 // let base = 'http://localhost:8080/serverc'
-// let base = 'http://www.icicc.cn:8080/serverc'
+// let base = 'http://www.icicc.cn:8080/server
 let orgServer = 'http://192.168.3.29:8000'
 
 // {withCredentials:true} -----> 跨域，设置携带 cookie、session 到后台，后台可以读取到自己设置的 cookie、session

@@ -75,7 +75,15 @@
       <el-table-column
           prop="predictResult"
           label="预测结果"
+          width="200">
+      </el-table-column>
+      <el-table-column
+          prop="predictResult"
+          label="操作"
           width="180">
+        <template>
+          <el-button type="primary" size="mini">下载</el-button>
+        </template>
       </el-table-column>
     </el-table>
     <el-pagination
@@ -115,10 +123,55 @@ export default {
   data() {
     return {
       tableData: [
+        {
+          id: 1,
+          dataName: '乳腺癌数据集1',
+          modelName: '模型1',
+          createUserName: '测试账号',
+          createTime: '2022-8-20 10:25:15',
+          finishTime: '2022-8-20 13:15:05',
+          predictResult: '乳腺癌数据集1_result.pdf'
+        },
+        {
+          id: 2,
+          dataName: '乳腺癌数据集1',
+          modelName: '模型5',
+          createUserName: '测试账号',
+          createTime: '2022-8-22 11:15:52',
+          finishTime: '2022-8-22 13:34:18',
+          predictResult: '乳腺癌数据集1_result.pdf'
+        },
+        {
+          id: 3,
+          dataName: '糖尿病数据集1',
+          modelName: '模型1',
+          createUserName: '测试账号',
+          createTime: '2022-8-22 15:18:32',
+          finishTime: '2022-8-22 18:12:45',
+          predictResult: '糖尿病数据集1_result.pdf'
+        },
+        {
+          id: 4,
+          dataName: '糖尿病数据集2',
+          modelName: '模型1',
+          createUserName: '测试账号',
+          createTime: '2022-8-23 09:13:45',
+          finishTime: '2022-8-23 11:45:26',
+          predictResult: '糖尿病数据集2_result.pdf'
+        },
+        {
+          id: 5,
+          dataName: '糖尿病数据集1',
+          modelName: '模型2',
+          createUserName: '测试账号',
+          createTime: '2022-9-1 10:26:48',
+          finishTime: '2022-9-1 13:35:41',
+          predictResult: '糖尿病数据集1_result.pdf'
+        }
       ],
       selectedTableData: [],
       currentPage: 1,
-      total: 0,
+      total: 5,
       loading: false,
       modelList: [],
       selectedModelList: [],

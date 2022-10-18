@@ -5,13 +5,6 @@
         <i class="el-icon-plus"></i>
         添加
       </el-button>
-      <el-button type="danger" @click="centerDialogVisible = true">
-        <i class="el-icon-delete"></i>
-        删除
-      </el-button>
-      <el-button type="warning" @click="centerDialogVisible = true">
-        权限控制
-      </el-button>
       <el-dialog
           title="上传"
           :visible.sync="centerDialogVisible"
@@ -19,24 +12,27 @@
           center>
         <upload upload-url="http://192.168.3.29:8000/add_Predict_data/" @uploadFinishFile="uploadFinish"></upload>
       </el-dialog>
-      <!--      <el-select-->
-      <!--          class="search_by_model"-->
-      <!--          v-model="selectedModelList"-->
-      <!--          placeholder="请选择模型">-->
-      <!--        <el-option-->
-      <!--            v-for="item in modelList"-->
-      <!--            :key="item.id"-->
-      <!--            :label="item.modelName"-->
-      <!--            :value="item.modelName">-->
-      <!--        </el-option>-->
-      <!--      </el-select>-->
-      <!--      <el-button type="primary" @click="startSearch">-->
-      <!--        <i class="el-icon-search"></i>-->
-      <!--        预测-->
-      <!--      </el-button>-->
-      <!--      <span class="selected-txt">-->
-      <!--      已选中{{ selectedNum }}个-->
-      <!--      </span>-->
+      <el-dialog
+          title="选择模型"
+          :visible.sync="dialogVisible"
+          width="30%">
+        <div style="margin-bottom: 1rem"><span>模型名称：</span>
+          <el-select v-model="model" placeholder="请选择模型">
+            <el-option
+                v-for="item in searchModelTypeList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"></el-option>
+          </el-select>
+        </div>
+        <div style="margin-bottom: 1rem"><span>模型类型：</span>
+          <el-input disabled style="width: 20rem" value="CNN"></el-input>
+        </div>
+        <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false; loading = false">取 消</el-button>
+        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      </span>
+      </el-dialog>
     </div>
     <el-table
         v-loading="loading"
@@ -44,52 +40,38 @@
         stripe
         style="width: 100%"
         @selection-change="handleSelectionChange">
-      <!--      <el-table-column-->
-      <!--          type="selection"-->
-      <!--          width="60">-->
-      <!--      </el-table-column>-->
       <el-table-column
           prop="id"
           label="ID"
           width="80">
       </el-table-column>
       <el-table-column
-          prop="predictDataName"
-          label="姓名"
-          width="140">
+          prop="orgName"
+          label="机构名称"
+          width="180">
+      </el-table-column>
+      <el-table-column
+          prop="dataName"
+          label="数据集名称"
+          width="180">
       </el-table-column>
       <el-table-column
           prop="createTime"
-          label="账号"
+          label="上传时间"
           width="180">
       </el-table-column>
       <el-table-column
-          prop="createUsername"
-          label="手机号"
-          width="180">
+          prop="option"
+          label="操作"
+          width="280">
+        <template slot-scope="scope">
+          <el-button size="mini" type="danger" @click="deletePredictData(scope.row)">删除</el-button>
+          <el-button size="mini" type="primary" @click="startSearch(scope.row)">
+            <i class="el-icon-search"></i>
+            预测
+          </el-button>
+        </template>
       </el-table-column>
-      <el-table-column
-          prop="description"
-          label="邮箱"
-          width="180">
-      </el-table-column>
-      <el-table-column
-          prop="status"
-          label="工作单位"
-          width="180">
-      </el-table-column>
-      <!--      <el-table-column-->
-      <!--          prop="option"-->
-      <!--          label="工作单位"-->
-      <!--          width="280">-->
-      <!--        <template slot-scope="scope">-->
-      <!--          <el-button type="danger" @click="deletePredictData(scope.row)">删除</el-button>-->
-      <!--          <el-button type="primary" @click="startSearch(scope.row)">-->
-      <!--            <i class="el-icon-search"></i>-->
-      <!--            预测-->
-      <!--          </el-button>-->
-      <!--        </template>-->
-      <!--      </el-table-column>-->
     </el-table>
     <el-pagination
         @size-change="handleSizeChange"
@@ -163,47 +145,48 @@ export default {
       })
     },
     startSearch(param) {
-      if (param.createUsername !== localStorage.getItem("nickname")) {
-        this.$notify({
-          title: '失败',
-          message: '无法使用他人数据预测',
-          type: 'error',
-          duration: 1000 * 3
-        });
-      } else if (this.selectedModelList === '') {
-        this.$notify({
-          title: '失败',
-          message: '未选择模型',
-          type: 'error',
-          duration: 1000 * 3
-        });
-      } else {
-        this.loading = true
-        let data = {
-          modelName: this.selectedModelList,
-          dataName: param.predictDataName,
-          status: 0
-        }
-        api.predict(data).then(res => {
-          if (res.status === 200) {
-            this.$notify({
-              title: '成功',
-              message: '预测成功',
-              type: 'success',
-              duration: 1000 * 3
-            });
-            this.loading = false
-          } else {
-            this.loading = false
-            this.$notify({
-              title: '失败',
-              message: '预测失败',
-              type: 'error',
-              duration: 1000 * 3
-            });
-          }
-        })
-      }
+      // if (param.createUsername !== localStorage.getItem("nickname")) {
+      //   this.$notify({
+      //     title: '失败',
+      //     message: '无法使用他人数据预测',
+      //     type: 'error',
+      //     duration: 1000 * 3
+      //   });
+      // } else if (this.selectedModelList === '') {
+      //   this.$notify({
+      //     title: '失败',
+      //     message: '未选择模型',
+      //     type: 'error',
+      //     duration: 1000 * 3
+      //   });
+      // } else {
+      this.loading = true
+      this.dialogVisible = true
+      // let data = {
+      //   modelName: this.selectedModelList,
+      //   dataName: param.predictDataName,
+      //   status: 0
+      // }
+      // api.predict(data).then(res => {
+      //   if (res.status === 200) {
+      //     this.$notify({
+      //       title: '成功',
+      //       message: '预测成功',
+      //       type: 'success',
+      //       duration: 1000 * 3
+      //     });
+      //     this.loading = false
+      //   } else {
+      //     this.loading = false
+      //     this.$notify({
+      //       title: '失败',
+      //       message: '预测失败',
+      //       type: 'error',
+      //       duration: 1000 * 3
+      //     });
+      //   }
+      // })
+      // }
     },
     uploadFinish(param) {
       if (param.response.status === 200) {
@@ -250,151 +233,40 @@ export default {
   },
   data() {
     return {
+      dialogVisible: false,
       modelList: [],
       selectedModelList: '',
       selectedNum: 0,
       tableData: [
-        // {
-        //   id: '0',
-        //   predictDataName: 'iT1tJeGy5lHwNTFCAjCN8g==',
-        //   createTime: '2022/4/20 14:32:45',
-        //   createUsername: '张三',
-        //   description: '无',
-        //   status: '数据已删除'
-        // },
-        // {
-        //   id: '1',
-        //   predictDataName: '6fjFatLC7Usfa01IjkfvrA==',
-        //   createTime: '2022/4/20 17:23:34',
-        //   createUsername: '济大医院',
-        //   description: '无',
-        //   status: '数据已删除'
-        // },
-        // {
-        //   id: '2',
-        //   predictDataName: 'wBsuas5EkpECHdJD9Fa6bw==',
-        //   createTime: '2022/4/20 19:43:23',
-        //   createUsername: '李四',
-        //   description: '无',
-        //   status: '数据已删除'
-        // },
-        // {
-        //   id: '3',
-        //   predictDataName: 'KGqiZv5aavyMwwmmJjPh+A==',
-        //   createTime: '2022/4/20 21:32:43',
-        //   createUsername: '王五',
-        //   description: '无',
-        //   status: '数据已删除'
-        // },
-        // {
-        //   id: '4',
-        //   predictDataName: 'rhWekSSPnXLIWFD9jBm1Kg==',
-        //   createTime: '2022/4/21 08:13:53',
-        //   createUsername: '张三',
-        //   description: '无',
-        //   status: '数据已删除'
-        // },
-        // {
-        //   id: '5',
-        //   predictDataName: 'foRPFraM4B9fYgO051aErg==',
-        //   createTime: '2022/4/21 09:23:43',
-        //   createUsername: '赵六',
-        //   description: '无',
-        //   status: '数据已删除'
-        // },
-        // {
-        //   id: '6',
-        //   predictDataName: 'X/XI4pk3zZ8KTNBOEZgIjA==',
-        //   createTime: '2022/4/21 09:32:13',
-        //   createUsername: '张三',
-        //   description: '无',
-        //   status: '数据已删除'
-        // },
-        // {
-        //   id: '7',
-        //   predictDataName: 'aGBAgYquv3Q+JqaejVKvjQ==',
-        //   createTime: '2022/4/21 11:11:32',
-        //   createUsername: '济大医院',
-        //   description: '无',
-        //   status: '数据已删除'
-        // },
-        // {
-        //   id: '8',
-        //   predictDataName: '0iU+Ui5fCi/m4cBrf+dl1A==',
-        //   createTime: '2022/4/21 14:32:45',
-        //   createUsername: '张三',
-        //   description: '无',
-        //   status: '数据已删除'
-        // },
-        // {
-        //   id: '9',
-        //   predictDataName: 'fyzF3Apw/k5MVxdEjqPEpQ==',
-        //   createTime: '2022/4/21 14:45:32',
-        //   createUsername: '济大医院',
-        //   description: '无',
-        //   status: '数据已删除'
-        // },
-        // {
-        //   id: '10',
-        //   predictDataName: 'hWOTBbdKDWuylYUy1gH4WA==',
-        //   createTime: '2022/4/21 14:56:14',
-        //   createUsername: '张三',
-        //   description: '无',
-        //   status: '数据已删除'
-        // },
-        // {
-        //   id: '11',
-        //   predictDataName: '6A+pCQFxavc6/9d9CnrdGw==',
-        //   createTime: '2022/4/20 17:23:34',
-        //   createUsername: '济大医院',
-        //   description: '无',
-        //   status: '数据已删除'
-        // },
-        // {
-        //   id: '12',
-        //   predictDataName: 'nY18NfO8ruVPQTtf0jVnFw==',
-        //   createTime: '2022/4/20 14:32:45',
-        //   createUsername: '张三',
-        //   description: '无',
-        //   status: '数据已删除'
-        // },
-        // {
-        //   id: '13',
-        //   predictDataName: 'PrVkPg8gdyVH9RpZ529VmA==',
-        //   createTime: '2022/4/20 17:23:34',
-        //   createUsername: '济大医院',
-        //   description: '无',
-        //   status: '数据已删除'
-        // }
         {
-          id: '0',
-          predictDataName: '张三',
-          createTime: '123123',
-          createUsername: '18888888885',
+          id: '1',
+          orgName: '测试账号',
+          dataName: '乳腺癌数据集1',
+          createTime: '2022-8-15 14:30:15',
           description: '18888888885@qq.com',
           status: '山东医院'
         },
         {
-          id: '1',
-          predictDataName: '李四',
-          createTime: '123456',
-          createUsername: '18888888886',
+          id: '2',
+          orgName: '测试账号',
+          dataName: '糖尿病数据集1',
+          createTime: '2022-8-16 14:15:15',
           description: '18888888886@qq.com',
           status: '天坛医院'
         },
         {
-          id: '2',
-          predictDataName: '王五',
-          createTime: '234234',
-          createUsername: '18888888887',
+          id: '3',
+          orgName: '测试账号',
+          dataName: '糖尿病数据集3',
+          createTime: '2022-8-16 18:30:15',
           description: '18888888887@qq.com',
           status: '空军医院'
         },
         {
-          id: '3',
-          predictDataName: '赵六',
-          createTime: '3456734',
-          createUsername: '18888888888',
+          id: '4',
+          orgName: '测试账号',
+          dataName: '糖尿病数据集3',
+          createTime: '2022-8-16 19:45:14',
           description: '18888888888@qq.com',
           status: '山东医院'
         },
@@ -406,6 +278,19 @@ export default {
       loading: false,
       pageSizes: [5, 10, 20, 50],
       pageSize: 10,
+      model: '',
+      searchModelTypeList: [
+        {value: '模型1', label: '模型1', type: 'CNN'},
+        {value: '模型2', label: '模型2', type: 'CNN'},
+        {value: '模型3', label: '模型3', type: 'CNN'},
+        {value: '模型4', label: '模型4', type: 'CNN'},
+        {value: '模型5', label: '模型5', type: 'CNN'},
+        {value: '模型6', label: '模型6', type: 'CNN'},
+        {value: '模型7', label: '模型7', type: 'CNN'},
+        {value: '模型8', label: '模型8', type: 'CNN'},
+        {value: '模型9', label: '模型9', type: 'CNN'},
+        {value: '模型10', label: '模型10', type: 'CNN'},
+      ],
     }
   },
 }

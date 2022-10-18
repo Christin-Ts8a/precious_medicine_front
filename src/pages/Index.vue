@@ -47,50 +47,6 @@
           >
             <component :is="item.content"></component>
           </el-tab-pane>
-<!--          <div class="quick-nav">-->
-<!--            <el-card class="quick-nav-item" :body-style="{ padding: '0px' }">-->
-<!--              <el-image class="quick-nav-img" :src="require('../assets/model_icon.svg')"></el-image>-->
-<!--              <div class="quick-nav-title">-->
-<!--                <span>模型管理</span>-->
-<!--              </div>-->
-<!--            </el-card>-->
-<!--            <el-card class="quick-nav-item" :body-style="{ padding: '0px' }">-->
-<!--              <el-image class="quick-nav-img" :src="require('../assets/model_train_icon.svg')"></el-image>-->
-<!--              <div class="quick-nav-title">-->
-<!--                <span>模型训练</span>-->
-<!--              </div>-->
-<!--            </el-card>-->
-<!--            <el-card class="quick-nav-item" :body-style="{ padding: '0px' }">-->
-<!--              <el-image class="quick-nav-img" :src="require('../assets/train_history.svg')"></el-image>-->
-<!--              <div class="quick-nav-title">-->
-<!--                <span>训练历史</span>-->
-<!--              </div>-->
-<!--            </el-card>-->
-<!--            <el-card class="quick-nav-item" :body-style="{ padding: '0px' }">-->
-<!--              <el-image class="quick-nav-img" :src="require('../assets/predict_data.svg')"></el-image>-->
-<!--              <div class="quick-nav-title">-->
-<!--                <span>预测数据</span>-->
-<!--              </div>-->
-<!--            </el-card>-->
-<!--            <el-card class="quick-nav-item" :body-style="{ padding: '0px' }">-->
-<!--              <el-image class="quick-nav-img" :src="require('../assets/predict_result.svg')"></el-image>-->
-<!--              <div class="quick-nav-title">-->
-<!--                <span>预测结果</span>-->
-<!--              </div>-->
-<!--            </el-card>-->
-<!--            <el-card  class="quick-nav-item" :body-style="{ padding: '0px' }">-->
-<!--              <el-image class="quick-nav-img" :src="require('../assets/user_single.svg')"></el-image>-->
-<!--              <div class="quick-nav-title">-->
-<!--                <span>个人用户</span>-->
-<!--              </div>-->
-<!--            </el-card>-->
-<!--            <el-card class="quick-nav-item" :body-style="{ padding: '0px' }">-->
-<!--              <el-image class="quick-nav-img" :src="require('../assets/user_org.svg')"></el-image>-->
-<!--              <div class="quick-nav-title">-->
-<!--                <span>机构用户</span>-->
-<!--              </div>-->
-<!--            </el-card>-->
-<!--          </div>-->
         </el-tabs>
       </el-main>
     </el-container>
@@ -106,6 +62,8 @@ import predict_result_manage from "../components/predict_result_manage";
 import model_train from "../components/model_train";
 import train_history from "../components/train_history";
 import * as api from '../api/api'
+import user_manage from "../components/user_manage";
+import org_manage from "../components/org_manage";
 
 export default {
   name: "Index",
@@ -130,6 +88,7 @@ export default {
     }
   },
   created: function () {
+    console.log(document.cookie);
     let nickname = localStorage.getItem("nickname")
     if (nickname !== undefined && nickname !== '' && nickname !== null) {
       this.username = nickname
@@ -206,7 +165,7 @@ export default {
               title: targetName,
               name: newTabName,
               menuIndex: menuIndex,
-              content: predict_data_manage
+              content: user_manage
             }
             break
           }
@@ -215,7 +174,7 @@ export default {
               title: targetName,
               name: newTabName,
               menuIndex: menuIndex,
-              content: predict_data_manage
+              content: org_manage
             }
             break
           }
