@@ -88,7 +88,6 @@ export default {
     }
   },
   created: function () {
-    console.log(document.cookie);
     let nickname = localStorage.getItem("nickname")
     if (nickname !== undefined && nickname !== '' && nickname !== null) {
       this.username = nickname

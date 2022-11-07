@@ -31,7 +31,7 @@
           width="180">
       </el-table-column>
       <el-table-column
-          prop="orgList"
+          prop="orgNameList"
           label="参与机构名称"
           width="180">
       </el-table-column>

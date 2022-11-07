@@ -25,13 +25,17 @@
           <span>模型管理</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item index="2-1">
-            <i class="el-icon-s-data"></i>
-            模型管理
-          </el-menu-item>
+<!--          <el-menu-item index="2-1">-->
+<!--            <i class="el-icon-s-data"></i>-->
+<!--            模型管理-->
+<!--          </el-menu-item>-->
           <el-menu-item index="2-2">
             <i class="el-icon-document"></i>
             模型训练
+          </el-menu-item>
+          <el-menu-item index="2-3">
+            <i class="el-icon-finished"></i>
+            训练历史
           </el-menu-item>
         </el-menu-item-group>
       </el-submenu>
@@ -45,13 +49,9 @@
             <i class="el-icon-s-platform"></i>
             预测数据管理
           </el-menu-item>
-          <el-menu-item index="3-2">
-            <i class="el-icon-edit"></i>
-            预测结果管理
-          </el-menu-item>
-<!--          <el-menu-item index="3-3">-->
-<!--            <i class="el-icon-finished"></i>-->
-<!--            训练历史-->
+<!--          <el-menu-item index="3-2">-->
+<!--            <i class="el-icon-edit"></i>-->
+<!--            预测结果管理-->
 <!--          </el-menu-item>-->
         </el-menu-item-group>
       </el-submenu>

@@ -43,6 +43,8 @@ export default {
           localStorage.setItem("nickname", res.data.nickname)
           localStorage.setItem("role", res.data.role)
           localStorage.setItem("orgCode", res.data.orgCode)
+          localStorage.setItem("username", this.username)
+          localStorage.setItem("userId", res.data.userId)
           this.$router.push({
             path: '/',
           })

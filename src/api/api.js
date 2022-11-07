@@ -4,7 +4,7 @@ import axios from 'axios'
 let base = 'http://127.0.0.1:8088'
 // let base = 'http://localhost:8080/serverc'
 // let base = 'http://www.icicc.cn:8080/server
-let orgServer = 'http://192.168.3.29:8000'
+let orgServer = 'http://127.0.0.1:8000'
 
 // {withCredentials:true} -----> 跨域，设置携带 cookie、session 到后台，后台可以读取到自己设置的 cookie、session
 
@@ -28,7 +28,7 @@ export const startTask = params => { return axios.post(`${base}/bcpTask/start`, 
 
 export const predictDataList = params => { return axios.post(`${base}/predict/list`, params, {withCredentials:true}).then(res => res.data) }
 
-export const predictDataAdd = params => { return axios.post(`${base}/predict/add`, params, {withCredentials:true}).then(res => res.data) }
+export const predictDataAdd = file => { return axios.post(`${base}/predict/add`, file, {withCredentials:true}).then(res => res.data) }
 
 export const predictDataDel = params => { return axios.post(`${base}/predict/delete`, params, {withCredentials:true}).then(res => res.data) }
 
@@ -39,4 +39,8 @@ export const getTrainHistory = params => { return axios.post(`${base}/history/li
 export const predict = params => { return axios.post(`${base}/result/predict`, params, {withCredentials:true}).then(res => res.data) }
 
 export const predictResultList = params => { return axios.post(`${base}/result/list`, params, {withCredentials:true}).then(res => res.data) }
+
+export const getTaskList = params => { return axios.post(`${base}/bcpTask/list`, params, {withCredentials:true}).then(res => res.data) }
+
+export const predict_model = params => { return axios.post(`${orgServer}/predict_model/`, params, {withCredentials:true}).then(res => res.data) }
 

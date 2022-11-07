@@ -137,13 +137,8 @@ export default {
   name: "model_manage",
   components: {upload},
   created() {
-    this.$notify({
-      title: 'Success',
-      message: '模型共享成功',
-      type: 'success',
-    });
     let orgCode = localStorage.getItem("orgCode")
-    this.uploadUrl = "http://192.168.3.29:8000/add_Model/?id=" + orgCode
+    this.uploadUrl = "http://127.0.0.1:8000/add_Model/?id=" + orgCode
     api.getModelList({pageSize: this.pageSize, pageNum: this.currentPage, byOrg: '1'}).then(res => {
       for (let i = 0; i < res.data.list.length; i++) {
         res.data.list[i].createTime = res.data.list[i].createTime.replace("T", " ").split(".")[0]

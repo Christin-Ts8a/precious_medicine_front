@@ -1,16 +1,17 @@
 <template>
   <div class="parent-container">
     <div class="btn-list">
-      <el-button type="primary" @click="centerDialogVisible = true">
+      <el-button class="btn-upload" type="primary" @click="centerDialogVisible = true">
         <i class="el-icon-plus"></i>
-        添加
+        上传数据集
       </el-button>
       <el-dialog
           title="上传"
           :visible.sync="centerDialogVisible"
           width="30%"
+          close-on-click-modal
           center>
-        <upload upload-url="http://192.168.3.29:8000/add_Predict_data/" @uploadFinishFile="uploadFinish"></upload>
+        <upload upload-url="http://127.0.0.1:8088/predict/add/" @uploadFinish="uploadFinish"></upload>
       </el-dialog>
       <el-dialog
           title="选择模型"
@@ -20,9 +21,9 @@
           <el-select v-model="model" placeholder="请选择模型">
             <el-option
                 v-for="item in searchModelTypeList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"></el-option>
+                :key="item.id"
+                :label="item.modelName"
+                :value="item.id"></el-option>
           </el-select>
         </div>
         <div style="margin-bottom: 1rem"><span>模型类型：</span>
@@ -30,7 +31,7 @@
         </div>
         <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false; loading = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="confirmSearch">确 定</el-button>
       </span>
       </el-dialog>
     </div>
@@ -46,12 +47,12 @@
           width="80">
       </el-table-column>
       <el-table-column
-          prop="orgName"
-          label="机构名称"
+          prop="createUsername"
+          label="创建人"
           width="180">
       </el-table-column>
       <el-table-column
-          prop="dataName"
+          prop="predictDataName"
           label="数据集名称"
           width="180">
       </el-table-column>
@@ -66,7 +67,7 @@
           width="280">
         <template slot-scope="scope">
           <el-button size="mini" type="danger" @click="deletePredictData(scope.row)">删除</el-button>
-          <el-button size="mini" type="primary" @click="startSearch(scope.row)">
+          <el-button size="mini" type="primary" @click="startSearch">
             <i class="el-icon-search"></i>
             预测
           </el-button>
@@ -93,17 +94,19 @@ export default {
   name: "predict_data_manage",
   components: {upload},
   created() {
-    api.getModelList({pageSize: 100, pageNum: 1, byOrg: '1'}).then(res => {
-      for (let i = 0; i < res.data.list.length; i++) {
-        res.data.list[i].createTime = res.data.list[i].createTime.replace("T", " ").split(".")[0]
-      }
+    
+    this.userId = localStorage.getItem("userId")
+    let params = {
+      pageSize: this.pageSize,
+      pageNum: this.currentPage,
+      byUser: this.userId
+    }
+    api.getTrainHistory(params).then(res => {
       this.modelList = res.data.list
+      this.searchModelTypeList = res.data.list
+      console.log(this.searchModelTypeList);
     })
     api.predictDataList({pageSize: this.pageSize, pageNum: this.currentPage}).then(res => {
-      for (let i = 0; i < res.data.list.length; i++) {
-        res.data.list[i].createTime = res.data.list[i].createTime.replace("T", " ").split(".")[0]
-        res.data.list[i].predictDataName = res.data.list[i].predictDataName.split(".")[0]
-      }
       this.tableData = res.data.list
       this.total = res.data.total
     })
@@ -142,6 +145,23 @@ export default {
             duration: 1000 * 3
           });
         }
+      })
+    },
+    confirmSearch(){
+      let data = {
+        userName: localStorage.getItem("userName")
+      }
+      this.dialogVisible = false
+      api.predict_model(data).then(res => {
+        this.loading = false
+      }).catch(res => {
+        this.loading = false
+        this.$notify({
+              title: '成功',
+              message: '预测结束',
+              type: 'success',
+              duration: 1000 * 3
+            });
       })
     },
     startSearch(param) {
@@ -189,28 +209,10 @@ export default {
       // }
     },
     uploadFinish(param) {
-      if (param.response.status === 200) {
-        let data = {
-          predictDataName: param.name
-        }
-        api.predictDataAdd(data).then(res => {
-          if (res.status === 200) {
-            this.centerDialogVisible = false
-            api.predictDataList({pageSize: this.pageSize, pageNum: this.currentPage}).then(res => {
-              for (let i = 0; i < res.data.list.length; i++) {
-                res.data.list[i].createTime = res.data.list[i].createTime.replace("T", " ").split(".")[0]
-                res.data.list[i].predictDataName = res.data.list[i].predictDataName.split(".")[0]
-              }
-              this.tableData = res.data.list
-              this.total = res.data.total
-              this.$notify({
-                title: '成功',
-                message: '上传成功',
-                type: 'success',
-                duration: 1000 * 3
-              });
-            })
-          }
+      if (param) {
+        api.predictDataList({pageSize: this.pageSize, pageNum: this.currentPage}).then(res => {
+          this.tableData = res.data.list
+          this.total = res.data.total
         })
       } else {
         this.$notify({
@@ -237,60 +239,17 @@ export default {
       modelList: [],
       selectedModelList: '',
       selectedNum: 0,
-      tableData: [
-        {
-          id: '1',
-          orgName: '测试账号',
-          dataName: '乳腺癌数据集1',
-          createTime: '2022-8-15 14:30:15',
-          description: '18888888885@qq.com',
-          status: '山东医院'
-        },
-        {
-          id: '2',
-          orgName: '测试账号',
-          dataName: '糖尿病数据集1',
-          createTime: '2022-8-16 14:15:15',
-          description: '18888888886@qq.com',
-          status: '天坛医院'
-        },
-        {
-          id: '3',
-          orgName: '测试账号',
-          dataName: '糖尿病数据集3',
-          createTime: '2022-8-16 18:30:15',
-          description: '18888888887@qq.com',
-          status: '空军医院'
-        },
-        {
-          id: '4',
-          orgName: '测试账号',
-          dataName: '糖尿病数据集3',
-          createTime: '2022-8-16 19:45:14',
-          description: '18888888888@qq.com',
-          status: '山东医院'
-        },
-      ],
+      tableData: [],
       selectedTableData: [],
       centerDialogVisible: false,
       currentPage: 1,
-      total: 4,
+      total: 0,
       loading: false,
       pageSizes: [5, 10, 20, 50],
       pageSize: 10,
       model: '',
-      searchModelTypeList: [
-        {value: '模型1', label: '模型1', type: 'CNN'},
-        {value: '模型2', label: '模型2', type: 'CNN'},
-        {value: '模型3', label: '模型3', type: 'CNN'},
-        {value: '模型4', label: '模型4', type: 'CNN'},
-        {value: '模型5', label: '模型5', type: 'CNN'},
-        {value: '模型6', label: '模型6', type: 'CNN'},
-        {value: '模型7', label: '模型7', type: 'CNN'},
-        {value: '模型8', label: '模型8', type: 'CNN'},
-        {value: '模型9', label: '模型9', type: 'CNN'},
-        {value: '模型10', label: '模型10', type: 'CNN'},
-      ],
+      searchModelTypeList: [],
+      userId: 0
     }
   },
 }
@@ -306,17 +265,9 @@ export default {
   align-items: center;
 }
 
-.el-button {
+.btn-upload {
   height: 40px;
-  margin-right: 10px;
-  width: 90px;
-}
-
-.select-model,
-.exec-predict {
-  height: 40px;
-  width: 110px;
-  margin-right: 10px;
+  width: 150px;
 }
 
 .el-pagination {

@@ -5,6 +5,7 @@
       ref="upload"
       :action=uploadUrl
       :on-success="uploadSuccess"
+      :on-change="handleChange"
       :multiple=true
       :limit="10"
       :file-list="fileList"
@@ -15,35 +16,43 @@
 </template>
 
 <script>
+import axios from "axios";
+import * as api from "../api/api";
+
 export default {
   name: "upload",
   props: ['uploadUrl'],
+  created() {
+    this.userId = localStorage.getItem("userId")
+  },
   methods: {
     submitUpload() {
-      // this.$refs.upload.submit();
-
-      this.$notify({
-        title: '开始训练',
-        message: '开始训练,请耐心等待',
-        duration: 0
-      });
-    },
-    handleRemove(file, fileList) {
-      console.log(file, fileList);
-    },
-    uploadSuccess(response, file, fileList) {
-      if (response.status === 200) {
-        // this.$emit('uploadFinish', false);
-        this.$emit('uploadFinishFile', file);
+      let data = {
+        createUser: localStorage.getItem("userName"),
+        predictDataName: this.fileList[0].name
       }
+      api.predictDataAdd(data).then(res => {
+        if (res.status === 200) {
+          this.$notify({
+            title: '成功',
+            message: '上传成功',
+            type: 'success',
+            duration: 1000 * 3
+          });
+        }
+      })
+    },
+    handleChange(file, fileList) {
+      this.fileList = fileList
+    },
+    uploadSuccess() {
+      this.$emit('uploadFinish', true);
     },
   },
   data() {
     return {
       fileList: [],
-      checked: false,
-      checked1: false,
-      checked2: false,
+      userId: 0
     }
   }
 }
